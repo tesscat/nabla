@@ -2,9 +2,8 @@
 #define CORE_EVENTS_HPP
 
 #include <functional>
-#include <optional>
 #include <string>
-namespace core::events {
+namespace core {
 class Event {
 public:
     bool cancelled = false;
