@@ -11,6 +11,6 @@ public:
     void applyForeground(std::ostream& output);
     void applyBackground(std::ostream& output);
 };
-}
+}  // namespace tui
 
-#endif // !TUI_COLOUR_HPP
+#endif  // !TUI_COLOUR_HPP

@@ -2,7 +2,7 @@ TUI_NAME := tui
 TUI_SRC_DIR := $(SRC_DIR)/$(TUI_NAME)/src
 
 TUI_CPP_SRC := $(shell find $(TUI_SRC_DIR) -name "*.cpp")
-TUI_CPP_OBJ := $(shell echo " $(TUI_CPP_SRC:.cpp=.o)" | sed "s| $(SRC_DIR)| $(BTUILD_DIR)|g")
+TUI_CPP_OBJ := $(shell echo " $(TUI_CPP_SRC:.cpp=.o)" | sed "s| $(SRC_DIR)| $(BUILD_DIR)|g")
 
 .PHONY: all run
 

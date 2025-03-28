@@ -6,10 +6,10 @@ BUILD_DIR := build
 OUT_DIR := out
 SRC_DIR := src
 HEADERS_DIR := $(SRC_DIR)/headers
-COMPONENTS := loader core
-MODULES := core
+COMPONENTS := loader core tui
+MODULES := core tui
 
-INC_FLAGS := -I$(HEADERS_DIR) -Ivendor/tomlplusplus/include 
+INC_FLAGS := -I$(HEADERS_DIR) -Ivendor/utfcpp/source -Ivendor/tomlplusplus/include 
 
 LINK := clang++
 CPPC := clang++

@@ -1,13 +1,27 @@
 #ifndef TUI_SIMPLETEXT_HPP
 #define TUI_SIMPLETEXT_HPP
 
-#include "tui/tui.hpp"
+#include <optional>
 #include <vector>
+#include "tui/tui.hpp"
 namespace tui {
 class SimpleTextComponent : public Component {
-    std::vector<TermOutputter&> render(const RenderContext& ctx, const RenderExtent& extent) override;
+    std::string contents;
+    bool hasBeenSet = false;
+public:
+    std::vector<std::shared_ptr<TermOutputter>> render(const RenderContext& ctx,
+                                       const RenderExtent& extent) override;
+    void flushUpdate() override;
+    std::optional<std::vector<PartialUpdateOutput>> partialRender(
+        const RenderExtent& extent,
+        const std::optional<RenderExtent>& oldExtent) override;
+
+    SimpleTextComponent(std::string initialString = "");
+    std::string getContents();
+    void setContents(std::string newContents);
+
     ~SimpleTextComponent() override;
 };
-}
+}  // namespace tui
 
-#endif // !TUI_SIMPLETEXT_HPP
+#endif  // !TUI_SIMPLETEXT_HPP

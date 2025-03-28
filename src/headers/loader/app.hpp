@@ -7,14 +7,15 @@
 #include <toml++/toml.hpp>
 
 namespace loader {
-struct App {
+class App {
     std::shared_mutex rwlock;
     toml::table table;
+
 public:
     App(toml::table table);
     ~App();
 
-    template<typename T>
+    template <typename T>
     T valueOrDefault(std::string_view path, T defaultValue) {
         rwlock.lock_shared();
         std::optional<T> node = table.at_path(path).value<T>();
@@ -29,13 +30,14 @@ public:
         return value.value();
     }
 
-    template<typename T>
-    std::vector<T> arrayOrDefault(std::string_view path, std::vector<T> defaultValue) {
+    template <typename T>
+    std::vector<T> arrayOrDefault(std::string_view path,
+                                  std::vector<T> defaultValue) {
         rwlock.lock_shared();
         toml::array* array = table.at_path(path).as_array();
         rwlock.unlock_shared();
         if (array) {
-            std::vector<T> output {};
+            std::vector<T> output{};
             for (auto& node : *array) {
                 std::optional<T> as_type = node.value<T>();
                 if (as_type) {
@@ -45,7 +47,7 @@ public:
             return output;
         } else {
             rwlock.lock();
-            toml::array arr {};
+            toml::array arr{};
             arr.insert(arr.begin(), defaultValue.begin(), defaultValue.end());
             table.insert_or_assign(path, arr);
             rwlock.unlock();
@@ -53,6 +55,6 @@ public:
         }
     }
 };
-}
+}  // namespace loader
 
 #endif
