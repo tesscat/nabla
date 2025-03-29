@@ -9,28 +9,22 @@
 #include "core/events.hpp"
 #include "tui/ansi.hpp"
 
-std::vector<char> current_output;
-char getchar_wrapped() {
-    char c = getchar();
-    current_output.push_back(c);
-    return c;
-}
-
 namespace tui {
 std::pair<uint, char> readNumber(char first) {
     char buff[8] = {first, 0, 0, 0, 0, 0, 0, 0};
-    char curr = getchar_wrapped();
+    char curr = getchar();
     int idx = 1;
     while (std::isdigit(curr)) {
         buff[idx] = curr;
         idx++;
-        curr = getchar_wrapped();
+        curr = getchar();
     }
     return std::pair(std::atoi(buff), curr);
 }
 std::pair<uint, char> readNumber() {
-    return readNumber(getchar_wrapped());
+    return readNumber(getchar());
 }
+
 
 KeyEvent::KeyEvent(
     char32_t unicode_,
@@ -68,23 +62,19 @@ bool decodePotentiallyTerminatingCharacter(char c, KeyEvent& ke) {
 }
 
 KeyEvent readInput() {
-    current_output.clear();
-    // while (getchar_wrapped() != 'u') {}
-    // return KeyEvent{};
-
     // we expect:
     // CSI 
     // unicode : [alt-code] : phys-loc ;
     // modifiers [: event-type] ;
     // text-as-codepoint [:second-codepoint:...] u
-    char first = getchar_wrapped();
-    char second = getchar_wrapped();
+    char first = getchar();
+    char second = getchar();
     if (first != ansi::CSI[0] || second != ansi::CSI[1])
         throw std::runtime_error("tui: input: Non-CSI initialiser on input");
 
     KeyEvent ke {};
 
-    char curr = getchar_wrapped();
+    char curr = getchar();
     if (decodePotentiallyTerminatingCharacter(curr, ke)) return ke;
 
     auto read_result = readNumber(curr);
@@ -94,7 +84,7 @@ KeyEvent readInput() {
     if (curr != ';') {
         // we have bonus key info
         // skip the known :
-        curr = getchar_wrapped();
+        curr = getchar();
         if (curr != ':') {
             // we have shift-key info!
             auto read_result = readNumber(curr);
@@ -115,13 +105,16 @@ KeyEvent readInput() {
 
         if (decodePotentiallyTerminatingCharacter(curr, ke)) return ke;
     }
-    // we have read the key code + alt key codes
-    // modifiers time
-    // skip the ;
-    read_result = readNumber();
-    ke.modifiers = read_result.first - 1;
-    curr = read_result.second;
+    curr = getchar();
     if (decodePotentiallyTerminatingCharacter(curr, ke)) return ke;
+    // we have read the key code + alt key codes
+    if (curr != ';') {
+        // modifiers time
+        read_result = readNumber(curr);
+        ke.modifiers = read_result.first - 1;
+        curr = read_result.second;
+        if (decodePotentiallyTerminatingCharacter(curr, ke)) return ke;
+    }
     if (curr != ';') {
         auto read_result = readNumber();
         ke.eventType = static_cast<EventType>(read_result.first);
@@ -129,11 +122,10 @@ KeyEvent readInput() {
         if (decodePotentiallyTerminatingCharacter(curr, ke)) return ke;
     }
 
-    // skip the ;
-    curr = getchar_wrapped();
     // codepoints time!
-    while (decodePotentiallyTerminatingCharacter(curr, ke)) {
-        auto read_result = readNumber(curr);
+    while (!decodePotentiallyTerminatingCharacter(curr, ke)) {
+        // skip the ; or :
+        auto read_result = readNumber();
         ke.textAsCodepoints.push_back(read_result.first);
         curr = read_result.second;
     }

@@ -11,8 +11,7 @@
 #include "utils.hpp"
 
 std::shared_ptr<tui::SimpleTextComponent> tc = std::make_shared<tui::SimpleTextComponent>(std::string("hello\nthere"));
-extern std::vector<char> current_output;
-std::vector<std::string> buff {15, std::string("          ")};
+std::vector<std::string> buff {10, std::string()};
 
 
 void keyconsumer(const tui::KeyEvent& event) {
@@ -23,7 +22,7 @@ void keyconsumer(const tui::KeyEvent& event) {
     ss << "\nmods: " << event.modifiers;
     ss << "\nevent: " << ets[event.eventType];
     buff.insert(buff.begin(), ss.str());
-    buff.resize(5);
+    buff.resize(10);
     std::stringstream ss2;
     for (auto& s : buff) {
         ss2 << s << '\n';
@@ -35,9 +34,6 @@ extern "C" void init(loader::App& app) {
     UNUSED(app);
     std::cout << "TUI module init" << std::endl;
 
-    // bool x = true;
-    // while (x) {};
-
     tui::Screen screen;
     screen.rootComponent = tc;
 
@@ -45,21 +41,10 @@ extern "C" void init(loader::App& app) {
 
     screen.render();
     while (true) {
-        // current_output.clear();
         auto inp = tui::readInput();
-        // current_output.push_back(0);
-        // buff.insert(buff.begin(), std::string(current_output.data()).substr(1));
-        // buff.resize(10);
         tui::keyQueue.fireEvent(inp);
-        if (inp.unicode == 'q' || (inp.unicode == 'c' && inp.modifiers == tui::CapsLock)) break;
-        // char c = getchar();
-        // if (c == 'q') break;
-        // std::stringstream ss;
-        // for (auto s : buff) ss << s << '\n';
-        // ss << "Read character: " << c << " (as hex) " << std::uppercase << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(c);
-        // tc->setContents(ss.str());
+        if (inp.unicode == 'q' || (inp.unicode == 'c' && inp.modifiers == tui::Ctrl)) break;
         screen.render();
-        // std::this_thread::sleep_for(std::chrono::milliseconds(250));
     };
 }
 

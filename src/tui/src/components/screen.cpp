@@ -10,12 +10,13 @@
 #include <csignal>
 #include <tui/input.hpp>
 
-// sigwinch (window resize) handler
-// TODO: make this global threadsafe
 
 namespace tui {
 
 tui::RenderExtent currentSize {.row=0, .col=0, .width=80, .height=30};
+
+// sigwinch (window resize) handler
+// TODO: make this global threadsafe
 bool hasSizeChanged = false;
 extern "C" void sigwinch(int sig) {
     UNUSED(sig);
@@ -62,7 +63,8 @@ Screen::Screen() {
     // report event types (press/repeat/release)
     // send both basic + shifted + physical layout key
     // and treat all keys as escape codes, so we don't get text anymore
-    std::cout << ansi::CSI << '=' << (0b1 | 0b10 | 0b100 | 0b1000) << ";1u";
+    // and enable the text-as-codepoints option
+    std::cout << ansi::CSI << '>' << (0b1 | 0b10 | 0b100 | 0b1000 | 0b10000) << 'u';
     // flush cout
     std::cout << std::endl;
     // bind sigwinch
