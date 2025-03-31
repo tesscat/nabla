@@ -4,7 +4,7 @@
 #include "utils.hpp"
 
 class MyEvent : public core::Event {
-   public:
+public:
     std::string name;
     MyEvent(std::string name_) : name{name_} {}
     ~MyEvent() override {}

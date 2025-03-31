@@ -21,8 +21,8 @@ $(OUT_DIR)/nabla: $(LOADER_CPP_OBJ)
 all: $(OUT_DIR)/nabla $(foreach module, $(MODULES), $(OUT_DIR)/modules/$(module).so)
 
 run: all
-	NABLA_loader__search_path="['./$(OUT_DIR)/modules']" NABLA_loader__modules="['core', 'tui']" $(OUT_DIR)/nabla
+	NABLA_loader__search_path="['./$(OUT_DIR)/modules']" NABLA_loader__modules="['core', 'tui', 'editor', 'main']" $(OUT_DIR)/nabla
 
 dbg: all 
-	NABLA_loader__search_path="['./$(OUT_DIR)/modules']" NABLA_loader__modules="['core', 'tui']" lldb $(OUT_DIR)/nabla
+	NABLA_loader__search_path="['./$(OUT_DIR)/modules']" NABLA_loader__modules="['core', 'tui', 'editor', 'main']" lldb $(OUT_DIR)/nabla
 

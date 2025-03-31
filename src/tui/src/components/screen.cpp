@@ -1,19 +1,18 @@
 #include <sys/ioctl.h>
 #include <termios.h>
+#include <csignal>
 #include <cstdio>
 #include <iostream>
+#include <tui/ansi.hpp>
 #include <tui/components/screen.hpp>
+#include <tui/input.hpp>
 #include "tui/gettermsize.hpp"
 #include "tui/tui.hpp"
 #include "utils.hpp"
-#include <tui/ansi.hpp>
-#include <csignal>
-#include <tui/input.hpp>
-
 
 namespace tui {
 
-tui::RenderExtent currentSize {.row=0, .col=0, .width=80, .height=30};
+tui::RenderExtent currentSize{.row = 0, .col = 0, .width = 80, .height = 30};
 
 // sigwinch (window resize) handler
 // TODO: make this global threadsafe
@@ -28,7 +27,8 @@ void updateSize() {
         auto value = newSize.value();
         currentSize.width = value.first;
         currentSize.height = value.second;
-        // std::cout << "resized to " << value.first << 'x' << value.second << std::endl;
+        // std::cout << "resized to " << value.first << 'x' << value.second <<
+        // std::endl;
     }
 }
 
@@ -40,7 +40,8 @@ Screen::Screen() {
     // disable input preprocessing (so now we handle things like ctrl-v)
     new_termios.c_lflag &= ~(ICANON | ECHO | IEXTEN);
     // disable software control flow (we handle ctrl-s and ctrl-q)
-    // disable turning carriage returns to newlines (we handle ctrl-j and ctrl-m)
+    // disable turning carriage returns to newlines (we handle ctrl-j and
+    // ctrl-m)
     new_termios.c_iflag &= ~(IXON | ICRNL);
     // disable output preprocessing (e.g. adding carriage returns to newlines)
     new_termios.c_oflag &= ~OPOST;
@@ -64,7 +65,8 @@ Screen::Screen() {
     // send both basic + shifted + physical layout key
     // and treat all keys as escape codes, so we don't get text anymore
     // and enable the text-as-codepoints option
-    std::cout << ansi::CSI << '>' << (0b1 | 0b10 | 0b100 | 0b1000 | 0b10000) << 'u';
+    std::cout << ansi::CSI << '>' << (0b1 | 0b10 | 0b100 | 0b1000 | 0b10000)
+              << 'u';
     // flush cout
     std::cout << std::endl;
     // bind sigwinch
@@ -81,7 +83,7 @@ void Screen::render() {
     }
     auto toDraw = rootComponent->render(ctx, currentSize);
     for (size_t i = 0; i < currentSize.height; i++) {
-        std::cout << ansi::CSI << (i+1) << ";1H" << std::endl;
+        std::cout << ansi::CSI << (i + 1) << ";1H" << std::endl;
         toDraw[i]->apply(std::cout);
     }
 }

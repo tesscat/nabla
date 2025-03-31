@@ -90,6 +90,7 @@ int main() {
                 init_t preinit = (init_t)dlsym(handle, "preinit");
 
                 if (preinit) {
+                    std::cout << "calling preinit for " << filepath << std::endl;
                     preinit(app);
                 }
                 module_handles.push_back(handle);
@@ -106,7 +107,7 @@ int main() {
             }
         }
         if (!loaded) {
-            std::cout << "Failed to find module `" << module
+            std::cout << "Failed to load module `" << module
                       << "`, continuing regardless\n";
         }
     }

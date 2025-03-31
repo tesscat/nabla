@@ -6,8 +6,8 @@ BUILD_DIR := build
 OUT_DIR := out
 SRC_DIR := src
 HEADERS_DIR := $(SRC_DIR)/headers
-COMPONENTS := loader core tui
-MODULES := core tui
+COMPONENTS := loader core editor tui main
+MODULES := core editor tui main
 
 INC_FLAGS := -I$(HEADERS_DIR) -Ivendor/utfcpp/source -Ivendor/tomlplusplus/include 
 

@@ -5,12 +5,22 @@
 #include <vector>
 #include "tui/tui.hpp"
 namespace tui {
+class SimpleTextOutputter : public TermOutputter {
+    std::string content;
+
+public:
+    SimpleTextOutputter(const std::string& string);
+    void apply(std::ostream& output) override;
+    ~SimpleTextOutputter() override;
+};
 class SimpleTextComponent : public Component {
     std::string contents;
     bool hasBeenSet = false;
+
 public:
-    std::vector<std::shared_ptr<TermOutputter>> render(const RenderContext& ctx,
-                                       const RenderExtent& extent) override;
+    std::vector<std::shared_ptr<TermOutputter>> render(
+        const RenderContext& ctx,
+        const RenderExtent& extent) override;
     void flushUpdate() override;
     std::optional<std::vector<PartialUpdateOutput>> partialRender(
         const RenderExtent& extent,

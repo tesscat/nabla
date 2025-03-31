@@ -143,15 +143,14 @@ std::pair<uint, char> readNumber();
 
 class KeyEvent : public core::Event {
     friend KeyEvent readInput();
-    KeyEvent(
-        char32_t unicode,
-        std::optional<char32_t> shifted,
-        std::optional<char32_t> physical,
-        uint modifiers,
-        EventType eventType,
-        std::vector<char32_t> textAsCodepoints
-    );
+    KeyEvent(char32_t unicode,
+             std::optional<char32_t> shifted,
+             std::optional<char32_t> physical,
+             uint modifiers,
+             EventType eventType,
+             std::vector<char32_t> textAsCodepoints);
     KeyEvent();
+
 public:
     char32_t unicode = 0;
     std::optional<char32_t> shifted;
@@ -164,6 +163,6 @@ public:
 KeyEvent readInput();
 
 extern core::EventQueue<KeyEvent> keyQueue;
-}
+}  // namespace tui
 
-#endif // !TUI_INPUT_HPP
+#endif  // !TUI_INPUT_HPP

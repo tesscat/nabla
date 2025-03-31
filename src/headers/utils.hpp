@@ -3,4 +3,4 @@
 
 #define UNUSED(x) (void(x));
 
-#endif // !UTILS_HPP
+#endif  // !UTILS_HPP

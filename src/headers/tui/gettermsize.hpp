@@ -7,4 +7,4 @@ namespace tui {
 std::optional<std::pair<unsigned short, unsigned short>> getTermSize();
 }
 
-#endif // !TUI_GETTERMSIZE_HPP
+#endif  // !TUI_GETTERMSIZE_HPP
